@@ -31,7 +31,16 @@ TRANSLATIONS = {
         'under_construction': 'This section is under construction',
         'went_wrong': 'Something went wrong!',
         'information_update': 'Your information is updated successfully!',
-        'process': 'Being processed...'
+        'process': 'Being processed...',
+        'help': 'Welcome to Amizone through Telegram!\n\n'
+                '/login -  to login into your account\n'
+                '/profile - to get your profile information\n'
+                '/update - update stored information\n'
+                '/timetable - to get timetable\n'
+                '/faculties - to get information about your faculties\n'
+                '/course or /attendance - to get information regarding your courses/attendance\n'
+                '/examSchedule - get exams schedule\n\n'
+                'Maintainer: https://t.me/abduvakhidov'
     }
 }
 
@@ -40,18 +49,18 @@ def get_translation(keyword, language='en'):
     return TRANSLATIONS[language][keyword]
 
 
-@router.handler
-@commonfilters.command('/start')
-async def start_command():
-    msg = get_translation('start').format(context.message.user.first_name)
-    await SendMessage(context.user.user_id, msg).send()
-
-
 @make_waiter
 @commonfilters.update_type(UpdateType.message)
 @commonfilters.chat_type(ChatType.private)
 def next():
     return True
+
+
+@router.handler
+@commonfilters.command('/start')
+async def start_command():
+    msg = get_translation('start').format(context.message.user.first_name)
+    await SendMessage(context.user.user_id, msg).send()
 
 
 @router.handler
@@ -105,7 +114,7 @@ async def auth():
 @router.handler
 @commonfilters.command('/help')
 async def help():
-    await SendMessage(context.user.user_id, get_translation('under_construction')).send()
+    await SendMessage(context.user.user_id, get_translation('help')).send()
 
 
 @router.handler
@@ -134,7 +143,7 @@ async def timetable():
 
 
 @router.handler
-@commonfilters.command('/courses')
+@commonfilters.command('/courses', '/attendance')
 async def courses():
     user_telegram_id = context.user.user_id
     user = User(user_telegram_id)
